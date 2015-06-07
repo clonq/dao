@@ -4,14 +4,14 @@ var debug = require('debug')('dao:test'),
 	memoryImpl = require('../impl/memory');
 
 const TEST_MODEL = {
-	name: 'name',
+	name: 'joe',
 	age: 23
 };
 
 describe("api tests", function() {
 	it('should fail if there no implementation provided', function(done){
 		dao
-		.put(TEST_MODEL)
+		.create(TEST_MODEL)
 		.then(function(res){
 			debug(res)
 			done();
@@ -26,5 +26,22 @@ describe("api tests", function() {
 	it('should validate implementations conforming to the dao schema v0', function(done){
 		dao.use(memoryImpl);
 		done();
+	});
+	it('should return a model with an id on create', function(done){
+		try {
+			dao
+			.use(memoryImpl)
+			.create(TEST_MODEL).
+			then(function(createdModel){
+				should.exist(createdModel);
+				createdModel.should.have.property('$id');
+				done();
+			})
+			.catch(function(err){
+				done(err);
+			})
+		} catch(err) {
+			done(err)
+		}
 	});
 });

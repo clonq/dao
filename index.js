@@ -1,4 +1,4 @@
-var debug = require('debug')('dao'),
+var debug = require('debug')('dao:main'),
 	Promise = require('bluebird'),
 	schemaValidator = require('jsonschema'),
     v0Schema = require('./schemas/v0.json'),
@@ -7,12 +7,12 @@ var debug = require('debug')('dao'),
 module.exports = {
 	use: function(impl){
 		this.impl = impl;
-		validate(impl);
+		return validate(impl);
 	},
 	impl: function(){
 		return this.impl;
 	},
-	put: function (model) {
+	create: function (model) {
 		return new Promise(function(resolve, reject){
 			if(impl) resolve(impl.put(model));
 			else reject(new Error('No DAO implementation available'));
@@ -21,13 +21,11 @@ module.exports = {
 }
 
 function validate(impl) {
-	return new Promise(function(resolve, reject){
-		if(impl) {
-			var errors = schemaValidator.validate(impl, v0Schema).errors;
-			if(errors.length) return reject(new Error(errors[0].stack))
-			else return resolve(impl);
-		} else {
-			return reject(new Error('Must provide an implementation'));
-		}
-	});
+	if(impl) {
+		var errors = schemaValidator.validate(impl, v0Schema).errors;
+		if(errors.length) throw new Error(errors[0].stack);
+		else return impl;
+	} else {
+		throw new Error('Must provide an implementation');
+	}
 }
