@@ -1,6 +1,18 @@
 {
   "name": "daoi",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "data access object interface",
-  "author": "Ovi Comes"
+  "scripts": {
+    "test": "DEBUG=dao node_modules/mocha/bin/mocha --reporter spec"
+  },
+  "author": "Ovi Comes",
+  "dependencies": {
+    "bluebird": "^2.9.27",
+    "debug": "^2.2.0",
+    "jsonschema": "^1.0.1"
+  },
+  "devDependencies": {
+    "chai": "^3.0.0",
+    "mocha": "^2.2.5"
+  }
 }
