@@ -9,12 +9,27 @@ module.exports = {
 		this.impl = impl;
 		return validate(impl);
 	},
-	impl: function(){
-		return this.impl;
-	},
 	create: function (model) {
 		return new Promise(function(resolve, reject){
-			if(impl) resolve(impl.put(model));
+			if(impl) return resolve(impl.create(model));
+			else return reject(new Error('No DAO implementation available'));
+		});
+	},
+	read: function (model) {
+		return new Promise(function(resolve, reject){
+			if(impl) resolve(impl.read(model));
+			else reject(new Error('No DAO implementation available'));
+		});
+	},
+	update: function (model) {
+		return new Promise(function(resolve, reject){
+			if(impl) resolve(impl.update(model));
+			else reject(new Error('No DAO implementation available'));
+		});
+	},
+	delete: function (model) {
+		return new Promise(function(resolve, reject){
+			if(impl) resolve(impl.delete(model));
 			else reject(new Error('No DAO implementation available'));
 		});
 	}
