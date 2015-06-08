@@ -5,6 +5,8 @@ var debug = require('debug')('dao:main'),
 	impl;
 
 module.exports = {
+	MEMORY: require('./impl/memory'),
+	FILE: require('./impl/file'),
 	use: function(impl){
 		this.impl = impl;
 		return validate(impl);

@@ -1,7 +1,6 @@
 var debug = require('debug')('dao:test'),
-    should = require('chai').should()
+    should = require('chai').should(),
     dao = require('../index');
-    memoryImpl = require('../impl/memory');
 
 const TEST_MODEL = {
     name: 'joe',
@@ -28,7 +27,7 @@ describe("v0 api tests", function() {
     });
     it('should validate implementations conforming to the dao schema v0', function(done){
         try {
-            dao.use(memoryImpl);
+            dao.use(dao.MEMORY);
             done();
         } catch(err) {
             done(err)
@@ -37,7 +36,7 @@ describe("v0 api tests", function() {
     it('should return a newly created model', function(done){
         try {
             dao
-            .use(memoryImpl)
+            .use(dao.MEMORY)
             .create(TEST_MODEL)
             .then(function(createdModel){
                 should.exist(createdModel);
@@ -56,7 +55,7 @@ describe("v0 api tests", function() {
         try {
             TEST_MODEL.$id = TEST_ID;
             dao
-            .use(memoryImpl)
+            .use(dao.MEMORY)
             .read(TEST_MODEL)
             .then(function(foundModel){
                 should.exist(foundModel);
@@ -75,7 +74,7 @@ describe("v0 api tests", function() {
             TEST_MODEL.$id = TEST_ID;
             TEST_MODEL.email = TEST_EMAIL;
             dao
-            .use(memoryImpl)
+            .use(dao.MEMORY)
             .update(TEST_MODEL)
             .then(function(updatedModel){
                 should.exist(updatedModel);
@@ -94,11 +93,29 @@ describe("v0 api tests", function() {
         try {
             TEST_MODEL.$id = TEST_ID;
             dao
-            .use(memoryImpl)
+            .use(dao.MEMORY)
             .delete(TEST_MODEL)
             .then(function(deletedModel){
                 should.exist(deletedModel);
                 deletedModel.should.have.property('$deleted');
+                done();
+            })
+            .catch(function(err){
+                done(err);
+            })
+        } catch(err) {
+            done(err)
+        }
+    });
+    it('should use file implementation when requested', function(done){
+        try {
+            dao
+            .use(dao.FILE)
+            .create(TEST_MODEL)
+            .then(function(createdModel){
+                should.exist(createdModel);
+                createdModel.should.have.property('$id');
+                TEST_ID = createdModel.$id;
                 done();
             })
             .catch(function(err){
