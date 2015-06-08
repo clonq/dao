@@ -9,3 +9,28 @@
 * read
 * update
 * delete
+
+###ver. 1 operations
+* create
+* read
+* update
+* delete
+* count
+* find
+* findOne
+* remove
+
+###ver. 2 operations
+* create
+* read
+* update
+* delete
+* count
+* find
+* findOne
+* remove
+* save
+* upsert
+* bulkCreate
+* bulkUpdate
+* bulkDelete

@@ -1,0 +1,19 @@
+{
+	"type": "object",
+	"properties": {
+		"create":				{ "type": "function" },
+		"read":					{ "type": "function" },
+		"update":				{ "type": "function" },
+		"delete":				{ "type": "function" },
+		"count":				{ "type": "function" },
+		"find":					{ "type": "function" },
+		"findOne":				{ "type": "function" },
+		"remove":				{ "type": "function" },
+		"save":					{ "type": "function" },
+		"upsert":				{ "type": "function" },
+		"bulkCreate":			{ "type": "function" },
+		"bulkUpdate":			{ "type": "function" },
+		"bulkDelete":			{ "type": "function" }
+	},
+	"required": ["create", "read", "update", "delete", "count", "find", "findOne", "remove", "save", "upsert", "bulkCreate", "bulkUpdate", "bulkDelete"]
+}
