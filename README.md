@@ -1,7 +1,7 @@
 # DAO
 
-* simple dao factory implementation with support for pluggable implementations
-* included basic in-memory and a file-based implementations
+* simple dao factory with support for pluggable implementations
+* included basic in-memory and file-based implementations
 * versioned dao specs
 
 
