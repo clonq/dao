@@ -1,11 +1,12 @@
-# dao
+# DAO
 
 * simple dao factory implementation with support for pluggable implementations
 * included basic in-memory and a file-based implementations
 * versioned dao specs
 
 
-###Usage example
+Usage example
+===
 ```
 var dao = require('daoi');
 
@@ -16,6 +17,17 @@ dao
     createdModel.should.have.property('$id');
 })
 ```
+
+Installation
+===
+
+```
+npm install daoi --save
+```
+
+
+Implementations
+===
 
 The dao package comes with two v0-compliant in-memory `dao.MEMORY` and file `dao.FILE` implementations.
 
@@ -28,13 +40,16 @@ dao.use(mongodao)
 ```
 
 Below are the operations an concrete dao module needs to implement grouped by compliance level. A dao implemenation should be at least ver 0 compliant. 
-####V0 compliant operations
+
+**V0 compliant operations**
+
 * create
 * read
 * update
 * delete
 
-####V1 compliant operations
+**V1 compliant operations**
+
 * create
 * read
 * update
@@ -44,7 +59,8 @@ Below are the operations an concrete dao module needs to implement grouped by co
 * findOne
 * remove
 
-####V2 compliant operations
+**V2 compliant operations**
+
 * create
 * read
 * update
@@ -76,6 +92,6 @@ Calling `register(modelname)` on a dao instance automatically creates a new `mod
 
 Dao runs a schema validation on the implementation set via `use` and makes available under the `modelname` key only the methods at the determined compliance level.
 
-The supplied un-memory and file-based dao implementations are v0 compliant at this time.
+The supplied in-memory and file-based dao implementations are v0 compliant at this time.
 
 If you write a dao implementation and wish to be listed here, [contact me](https://github.com/clonq).
