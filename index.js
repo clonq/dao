@@ -3,8 +3,7 @@ var debug = require('debug')('dao:main'),
 	schemaValidator = require('jsonschema'),
     v0Schema = require('./schemas/v0.json'),
     v1Schema = require('./schemas/v1.json'),
-    v2Schema = require('./schemas/v2.json'),
-	impl;
+    v2Schema = require('./schemas/v2.json');
 
 module.exports = {
 	MEMORY: require('./impl/memory'),
@@ -12,13 +11,13 @@ module.exports = {
 	use: function(impl){
 		this.impl = impl;
 		try {
-			validate(impl, v0Schema);
+			validate(this.impl, v0Schema);
 			this.complianceLevel = 'v0';
 			try {
-				validate(impl, v1Schema);
+				validate(this.impl, v1Schema);
 				this.complianceLevel = 'v1';
 				try {
-					validate(impl, v2Schema);
+					validate(this.impl, v2Schema);
 					this.complianceLevel = 'v2';
 				} catch(err) {
 					// v1 compliant
@@ -35,29 +34,42 @@ module.exports = {
 		return this.complianceLevel;
 	},
 	register: function(model){
-
+		if(this.impl) this.impl[model] = {};
+		var compliantSchema;
+		if(this.complianceLevel == 'v0') compliantSchema = v0Schema;
+		else if(this.complianceLevel == 'v1') compliantSchema = v1Schema;
+		else if(this.complianceLevel == 'v2') compliantSchema = v2Schema;
+		if(compliantSchema) {
+			var impl = this.impl;
+			Object.keys(compliantSchema.properties).forEach(function(op){
+				impl[model][op] = function(data){
+					data.$type = model;
+					return impl[op](data);
+				}
+			})
+		}
 	},
 	create: function (model) {
 		return new Promise(function(resolve, reject){
-			if(impl) return resolve(impl.create(model));
+			if(this.impl) return resolve(this.impl.create(model));
 			else return reject(new Error('No DAO implementation available'));
 		});
 	},
 	read: function (model) {
 		return new Promise(function(resolve, reject){
-			if(impl) resolve(impl.read(model));
+			if(this.impl) resolve(this.impl.read(model));
 			else reject(new Error('No DAO implementation available'));
 		});
 	},
 	update: function (model) {
 		return new Promise(function(resolve, reject){
-			if(impl) resolve(impl.update(model));
+			if(this.impl) resolve(this.impl.update(model));
 			else reject(new Error('No DAO implementation available'));
 		});
 	},
 	delete: function (model) {
 		return new Promise(function(resolve, reject){
-			if(impl) resolve(impl.delete(model));
+			if(this.impl) resolve(this.impl.delete(model));
 			else reject(new Error('No DAO implementation available'));
 		});
 	}

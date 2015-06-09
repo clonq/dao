@@ -154,11 +154,32 @@ describe("v0 api tests", function() {
     });    
     it('should allow for model registration', function(done){
         try {
-            var impl = dao
-            .use(dao.MEMORY)
-            .register('user');
+            var impl = dao.use(dao.MEMORY)
+            dao.register('user');
             should.exist(impl);
             impl.should.have.property('user');
+            impl.user.should.have.property('create');
+            impl.user.should.have.property('read');
+            impl.user.should.have.property('update');
+            impl.user.should.have.property('delete');
+            done();
+        } catch(err) {
+            done(err)
+        }
+    });    
+    it('should have proper model type for registered models', function(done){
+        try {
+            var impl = dao.use(dao.MEMORY)
+            dao.register('user');
+            impl.user.create({name:'test'})
+            .then(function(newModel){
+                should.exist(newModel);
+                newModel.should.have.property('$type').and.equal('user');
+                done();
+            })
+            .catch(function(err){
+                done(err);
+            })
         } catch(err) {
             done(err)
         }

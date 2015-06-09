@@ -8,6 +8,7 @@ var Promise = require('bluebird'),
 module.exports = {
     create: function (model) {
         return new Promise(function(resolve, reject){
+            userSchema.required = [];
             var schemaErrors = schemaValidator.validate(model, userSchema).errors;
             if(schemaErrors.length == 0) {
                 model.$id = uuid.v4();
