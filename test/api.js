@@ -33,7 +33,7 @@ describe("v0 api tests", function() {
             done(err)
         }
     });
-    it('should return a newly created model', function(done){
+    it('should return a newly created model using the in-memory adapter', function(done){
         try {
             dao
             .use(dao.MEMORY)
@@ -51,7 +51,7 @@ describe("v0 api tests", function() {
             done(err)
         }
     });
-    it('should return an existing model', function(done){
+    it('should return an existing model using the in-memory adapter', function(done){
         try {
             TEST_MODEL.$id = TEST_ID;
             dao
@@ -69,7 +69,7 @@ describe("v0 api tests", function() {
             done(err)
         }
     });
-    it('should return a valid updated model', function(done){
+    it('should return a valid updated model using the in-memory adapter', function(done){
         try {
             TEST_MODEL.$id = TEST_ID;
             TEST_MODEL.email = TEST_EMAIL;
@@ -89,7 +89,7 @@ describe("v0 api tests", function() {
             done(err)
         }
     });
-    it('should return the deleted model', function(done){
+    it('should return the deleted model using the in-memory adapter', function(done){
         try {
             TEST_MODEL.$id = TEST_ID;
             dao
@@ -107,7 +107,7 @@ describe("v0 api tests", function() {
             done(err)
         }
     });
-    it.skip('should use file implementation when requested', function(done){
+    it('should return a newly created model using the file adapter', function(done){
         try {
             dao
             .use(dao.FILE)
@@ -116,6 +116,62 @@ describe("v0 api tests", function() {
                 should.exist(createdModel);
                 createdModel.should.have.property('$id');
                 TEST_ID = createdModel.$id;
+                done();
+            })
+            .catch(function(err){
+                done(err);
+            })
+        } catch(err) {
+            done(err)
+        }
+    });
+    it('should return an existing model using the file adapter', function(done){
+        try {
+            TEST_MODEL.$id = TEST_ID;
+            dao
+            .use(dao.FILE)
+            .read(TEST_MODEL)
+            .then(function(foundModel){
+                should.exist(foundModel);
+                foundModel.should.have.property('$id').and.equal(TEST_ID);
+                done();
+            })
+            .catch(function(err){
+                done(err);
+            })
+        } catch(err) {
+            done(err)
+        }
+    });
+    it('should return a valid updated model using the file adapter', function(done){
+        try {
+            TEST_MODEL.$id = TEST_ID;
+            TEST_MODEL.email = TEST_EMAIL;
+            dao
+            .use(dao.FILE)
+            .update(TEST_MODEL)
+            .then(function(updatedModel){
+                should.exist(updatedModel);
+                updatedModel.should.have.property('email').and.equal(TEST_EMAIL);
+                updatedModel.should.have.property('$updated');
+                done();
+            })
+            .catch(function(err){
+                done(err);
+            })
+        } catch(err) {
+            done(err)
+        }
+    });
+    it('should return the deleted model using the file adapter', function(done){
+        try {
+            TEST_MODEL.$id = TEST_ID;
+            dao
+            .use(dao.FILE)
+            .delete(TEST_MODEL)
+            .then(function(deletedModel){
+                should.exist(deletedModel);
+                deletedModel.should.have.property('$deleted');
                 done();
             })
             .catch(function(err){
