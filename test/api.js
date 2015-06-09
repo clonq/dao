@@ -107,7 +107,7 @@ describe("v0 api tests", function() {
             done(err)
         }
     });
-    it('should use file implementation when requested', function(done){
+    it.skip('should use file implementation when requested', function(done){
         try {
             dao
             .use(dao.FILE)
@@ -125,4 +125,42 @@ describe("v0 api tests", function() {
             done(err)
         }
     });
+    it('should validate implementors', function(done){
+        try {
+            var impl = dao.use(dao.MEMORY);
+            //v0 compliant
+            impl.should.have.property('create');
+            impl.should.have.property('read');
+            impl.should.have.property('update');
+            impl.should.have.property('delete');
+            // non v1
+            impl.should.not.have.property('count');
+            impl.should.not.have.property('find');
+            impl.should.not.have.property('findOne');
+            done();
+        } catch(err){
+            done(err);
+        }
+    });
+    it('should return the appropiate compliance level', function(done){
+        try {
+            dao.use(dao.MEMORY);
+            var compliance = dao.getComplianceLevel();
+            compliance.should.equal('v0');
+            done();
+        } catch(err) {
+            done(err)
+        }
+    });    
+    it('should allow for model registration', function(done){
+        try {
+            var impl = dao
+            .use(dao.MEMORY)
+            .register('user');
+            should.exist(impl);
+            impl.should.have.property('user');
+        } catch(err) {
+            done(err)
+        }
+    });    
 });
