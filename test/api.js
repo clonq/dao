@@ -11,7 +11,7 @@ var TEST_ID;
 var TEST_EMAIL = 'joe@test.com';
 
 describe("v0 api tests", function() {
-    it('should fail if there no implementation provided', function(done){
+    it('should fail if no implementation is provided', function(done){
         dao
         .create(TEST_MODEL)
         .then(function(res){
