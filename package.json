@@ -12,9 +12,7 @@
   "author": "Ovi Comes",
   "dependencies": {
     "bluebird": "^2.9.27",
-    "bonsens-models": "^0.1.0",
     "debug": "^2.2.0",
-    "jsonschema": "^1.0.1",
     "lodash": "^3.9.3",
     "uuid": "^2.0.1"
   },
