@@ -10,7 +10,7 @@ const TEST_MODEL = {
 var TEST_ID;
 var TEST_EMAIL = 'joe@test.com';
 
-describe("v0 api tests", function() {
+describe("v0 common api tests", function() {
     it('should fail if no implementation is provided', function(done){
         dao
         .create(TEST_MODEL)
@@ -33,6 +33,27 @@ describe("v0 api tests", function() {
             done(err)
         }
     });
+    it('should validate implementors', function(done){
+        try {
+            var impl = dao.use(dao.MEMORY);
+            //v0 compliant
+            impl.should.have.property('create');
+            impl.should.have.property('read');
+            impl.should.have.property('update');
+            impl.should.have.property('delete');
+            //v1 compliant
+            impl.should.have.property('count');
+            impl.should.have.property('find');
+            impl.should.have.property('findOne');
+            //todo: non v2 compliant
+            done();
+        } catch(err){
+            done(err);
+        }
+    });
+});
+
+describe("v0 api tests - memory implementation", function() {
     it('should return a newly created model using the in-memory adapter', function(done){
         try {
             dao
@@ -107,6 +128,41 @@ describe("v0 api tests", function() {
             done(err)
         }
     });
+    it('should allow for model registration', function(done){
+        try {
+            var impl = dao.use(dao.MEMORY)
+            dao.register('user');
+            should.exist(impl);
+            impl.should.have.property('user');
+            impl.user.should.have.property('create');
+            impl.user.should.have.property('read');
+            impl.user.should.have.property('update');
+            impl.user.should.have.property('delete');
+            done();
+        } catch(err) {
+            done(err)
+        }
+    });    
+    it('should have proper model type for registered models', function(done){
+        try {
+            var impl = dao.use(dao.MEMORY);
+            dao.register('user');
+            impl.user.create(TEST_MODEL)
+            .then(function(newModel){
+                should.exist(newModel);
+                newModel.should.have.property('$type').and.equal('user');
+                done();
+            })
+            .catch(function(err){
+                done(err);
+            })
+        } catch(err) {
+            done(err)
+        }
+    });
+});
+
+describe("v0 api tests - file implementation", function() {
     it('should return a newly created model using the file adapter', function(done){
         try {
             dao
@@ -181,24 +237,6 @@ describe("v0 api tests", function() {
             done(err)
         }
     });
-    it('should validate implementors', function(done){
-        try {
-            var impl = dao.use(dao.MEMORY);
-            //v0 compliant
-            impl.should.have.property('create');
-            impl.should.have.property('read');
-            impl.should.have.property('update');
-            impl.should.have.property('delete');
-            //v1 compliant
-            impl.should.have.property('count');
-            impl.should.have.property('find');
-            impl.should.have.property('findOne');
-            //todo: non v2 compliant
-            done();
-        } catch(err){
-            done(err);
-        }
-    });
     it('should return the appropiate compliance level', function(done){
         try {
             dao.use(dao.MEMORY);
@@ -209,42 +247,9 @@ describe("v0 api tests", function() {
             done(err)
         }
     });    
-    it('should allow for model registration', function(done){
-        try {
-            var impl = dao.use(dao.MEMORY)
-            dao.register('user');
-            should.exist(impl);
-            impl.should.have.property('user');
-            impl.user.should.have.property('create');
-            impl.user.should.have.property('read');
-            impl.user.should.have.property('update');
-            impl.user.should.have.property('delete');
-            done();
-        } catch(err) {
-            done(err)
-        }
-    });    
-    it('should have proper model type for registered models', function(done){
-        try {
-            var impl = dao.use(dao.MEMORY);
-            dao.register('user');
-            // impl.user.create({name:'test'})
-            impl.user.create(TEST_MODEL)
-            .then(function(newModel){
-                should.exist(newModel);
-                newModel.should.have.property('$type').and.equal('user');
-                done();
-            })
-            .catch(function(err){
-                done(err);
-            })
-        } catch(err) {
-            done(err)
-        }
-    });
 });
 
-describe("v1 api tests", function() {
+describe("v1 api tests - memory implementation", function() {
     it('should count the records for valid criteria using the in-memory adapter', function(done){
         try {
             var impl = dao.use(dao.MEMORY);
@@ -285,6 +290,67 @@ describe("v1 api tests", function() {
     it('should find exactly one record for valid criteria using the in-memory adapter', function(done){
         try {
             var impl = dao.use(dao.MEMORY);
+            dao.register('user');
+            impl.user.findOne({name:'joe'})
+            .then(function(foundModel){
+                should.exist(foundModel);
+                foundModel.should.be.an.object;
+                foundModel.should.have.property('name').and.equal(TEST_MODEL.name);
+                done();
+            })
+            .catch(function(err){
+                done(err);
+            })
+        } catch(err) {
+            done(err)
+        }
+    });
+});
+
+describe("v1 api tests - file implementation", function() {
+    it('should count the records for valid criteria using the file adapter', function(done){
+        try {
+            var impl = dao.use(dao.FILE);
+            dao.register('user');
+            impl.user.create(TEST_MODEL)
+            .then(function(res){
+                impl.user.count({name:'joe'})
+                .then(function(count){
+                    should.exist(count);
+                    count.should.be.a.number;
+                    count.should.equal(1);
+                    done();
+                })
+                .catch(function(err){
+                    done(err);
+                })
+            })
+        } catch(err) {
+            done(err)
+        }
+    });
+    it('should find at least one record for valid criteria using the file adapter', function(done){
+        try {
+            var impl = dao.use(dao.FILE);
+            dao.register('user');
+            impl.user.find({name:'joe'})
+            .then(function(foundModels){
+                should.exist(foundModels);
+                foundModels.should.be.an.array;
+                foundModels.length.should.equal(1);
+                foundModels[0].should.have.property('name').and.equal(TEST_MODEL.name);
+                done();
+            })
+            .catch(function(err){
+                done(err);
+            })
+        } catch(err) {
+            done(err)
+        }
+    });
+    it('should find exactly one record for valid criteria using the file adapter', function(done){
+        try {
+            var impl = dao.use(dao.FILE);
             dao.register('user');
             impl.user.findOne({name:'joe'})
             .then(function(foundModel){

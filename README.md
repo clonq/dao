@@ -65,7 +65,7 @@ Below are the operations required to be implemented by a concrete dao implementa
 * bulkUpdate
 * bulkDelete
 
-This package comes with a v1-compliant in-memory implementation (`dao.MEMORY`) and a v0-compliant file implementation (`dao.FILE`).
+This package comes with a v1-compliant in-memory implementation (`dao.MEMORY`) and a v1-compliant file implementation (`dao.FILE`).
 
 Other implementations can be plugged in like this:
 

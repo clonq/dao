@@ -59,7 +59,7 @@ module.exports = {
                 delete model.$type;
                 return resolve(_.size(_.values(buckets[bucket]), model));
             } else {
-                return reject(new Error('required params missing'));
+                return reject(new Error('required criteria missing'));
             }
         });
     },
@@ -70,7 +70,7 @@ module.exports = {
                 delete model.$type;
                 return resolve(_.where(_.values(buckets[bucket]), model));
             } else {
-                return reject(new Error('required params missing'));
+                return reject(new Error('required criteria missing'));
             }
         });
     },
@@ -81,7 +81,7 @@ module.exports = {
                 delete model.$type;
                 return resolve(_.findWhere(_.values(buckets[bucket]), model));
             } else {
-                return reject(new Error('required params missing'));
+                return reject(new Error('required criteria missing'));
             }
         });
     }
