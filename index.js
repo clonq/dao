@@ -72,6 +72,24 @@ module.exports = {
 			if(this.impl) resolve(this.impl.delete(model));
 			else reject(new Error('No DAO implementation available'));
 		});
+	},
+	count: function (model) {
+		return new Promise(function(resolve, reject){
+			if(this.impl) resolve(this.impl.count(model));
+			else reject(new Error('No DAO implementation available'));
+		});
+	},
+	find: function (model) {
+		return new Promise(function(resolve, reject){
+			if(this.impl) resolve(this.impl.find(model));
+			else reject(new Error('No DAO implementation available'));
+		});
+	},
+	findOne: function (model) {
+		return new Promise(function(resolve, reject){
+			if(this.impl) resolve(this.impl.findOne(model));
+			else reject(new Error('No DAO implementation available'));
+		});
 	}
 }
 

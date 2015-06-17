@@ -189,10 +189,11 @@ describe("v0 api tests", function() {
             impl.should.have.property('read');
             impl.should.have.property('update');
             impl.should.have.property('delete');
-            // non v1
-            impl.should.not.have.property('count');
-            impl.should.not.have.property('find');
-            impl.should.not.have.property('findOne');
+            //v1 compliant
+            impl.should.have.property('count');
+            impl.should.have.property('find');
+            impl.should.have.property('findOne');
+            //todo: non v2 compliant
             done();
         } catch(err){
             done(err);
@@ -202,7 +203,7 @@ describe("v0 api tests", function() {
         try {
             dao.use(dao.MEMORY);
             var compliance = dao.getComplianceLevel();
-            compliance.should.equal('v0');
+            compliance.should.equal('v1');
             done();
         } catch(err) {
             done(err)
@@ -225,9 +226,10 @@ describe("v0 api tests", function() {
     });    
     it('should have proper model type for registered models', function(done){
         try {
-            var impl = dao.use(dao.MEMORY)
+            var impl = dao.use(dao.MEMORY);
             dao.register('user');
-            impl.user.create({name:'test'})
+            // impl.user.create({name:'test'})
+            impl.user.create(TEST_MODEL)
             .then(function(newModel){
                 should.exist(newModel);
                 newModel.should.have.property('$type').and.equal('user');
@@ -239,5 +241,63 @@ describe("v0 api tests", function() {
         } catch(err) {
             done(err)
         }
-    });    
+    });
+});
+
+describe("v1 api tests", function() {
+    it('should count the records for valid criteria using the in-memory adapter', function(done){
+        try {
+            var impl = dao.use(dao.MEMORY);
+            dao.register('user');
+            impl.user.count({name:'joe'})
+            .then(function(count){
+                should.exist(count);
+                count.should.be.a.number;
+                count.should.equal(1);
+                done();
+            })
+            .catch(function(err){
+                done(err);
+            })
+        } catch(err) {
+            done(err)
+        }
+    });
+    it('should find at least one record for valid criteria using the in-memory adapter', function(done){
+        try {
+            var impl = dao.use(dao.MEMORY);
+            dao.register('user');
+            impl.user.find({name:'joe'})
+            .then(function(foundModels){
+                should.exist(foundModels);
+                foundModels.should.be.an.array;
+                foundModels.length.should.equal(1);
+                foundModels[0].should.have.property('name').and.equal(TEST_MODEL.name);
+                done();
+            })
+            .catch(function(err){
+                done(err);
+            })
+        } catch(err) {
+            done(err)
+        }
+    });
+    it('should find exactly one record for valid criteria using the in-memory adapter', function(done){
+        try {
+            var impl = dao.use(dao.MEMORY);
+            dao.register('user');
+            impl.user.findOne({name:'joe'})
+            .then(function(foundModel){
+                should.exist(foundModel);
+                foundModel.should.be.an.object;
+                foundModel.should.have.property('name').and.equal(TEST_MODEL.name);
+                done();
+            })
+            .catch(function(err){
+                done(err);
+            })
+        } catch(err) {
+            done(err)
+        }
+    });
 });

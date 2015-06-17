@@ -51,5 +51,38 @@ module.exports = {
                 return reject(new Error('required $id is missing'));
             }
         });
+    },
+    count: function (model) {
+        return new Promise(function(resolve, reject){
+            if(model) {
+                var bucket = model.$type || 'unknown';
+                delete model.$type;
+                return resolve(_.size(_.values(buckets[bucket]), model));
+            } else {
+                return reject(new Error('required params missing'));
+            }
+        });
+    },
+    find: function (model) {
+        return new Promise(function(resolve, reject){
+            if(model) {
+                var bucket = model.$type || 'unknown';
+                delete model.$type;
+                return resolve(_.where(_.values(buckets[bucket]), model));
+            } else {
+                return reject(new Error('required params missing'));
+            }
+        });
+    },
+    findOne: function (model) {
+        return new Promise(function(resolve, reject){
+            if(model) {
+                var bucket = model.$type || 'unknown';
+                delete model.$type;
+                return resolve(_.findWhere(_.values(buckets[bucket]), model));
+            } else {
+                return reject(new Error('required params missing'));
+            }
+        });
     }
 }
