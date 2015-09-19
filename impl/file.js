@@ -1,10 +1,10 @@
 var Promise = require('bluebird'),
     uuid = require('uuid'),
     _ = require('lodash'),
-    fs = Promise.promisifyAll(require('fs')),
-    buckets = {};
+    fs = Promise.promisifyAll(require('fs'));
 
 const STORAGE = 'storage.json';
+var buckets = loadData(STORAGE);
 
 module.exports = {
     create: function (model) {
@@ -60,7 +60,7 @@ module.exports = {
             if(model) {
                 var bucket = model.$type || 'unknown';
                 delete model.$type;
-                return resolve(_.size(_.values(buckets[bucket]), model));
+                return resolve(_.size(_.where(_.values(buckets[bucket]), model)));
             } else {
                 return reject(new Error('required criteria missing'));
             }
@@ -99,4 +99,14 @@ function persist(model, resolve, reject){
     .catch(function(err){
         return reject(err);
     })
+}
+
+function loadData(storageFilename) {
+    var storageFilename = ['.', storageFilename].join(require('path').sep);
+    if(fs.existsSync(storageFilename)) {
+        console.log('storage initiated from', storageFilename);
+        return JSON.parse(fs.readFileSync(storageFilename, 'utf8'));
+    } else {
+        return {};
+    }
 }

@@ -4,6 +4,12 @@ var Promise = require('bluebird'),
     buckets = {};
 
 module.exports = {
+    clear: function () {
+        return new Promise(function(resolve){
+            buckets = {};
+            return resolve(buckets);
+        });
+    },
     create: function (model) {
         return new Promise(function(resolve, reject){
             model.$id = uuid.v4();
@@ -57,7 +63,7 @@ module.exports = {
             if(model) {
                 var bucket = model.$type || 'unknown';
                 delete model.$type;
-                return resolve(_.size(_.values(buckets[bucket]), model));
+                return resolve(_.size(_.where(_.values(buckets[bucket]), model)));
             } else {
                 return reject(new Error('required criteria missing'));
             }

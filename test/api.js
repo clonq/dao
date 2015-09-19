@@ -1,3 +1,6 @@
+const TEST_STORAGE = '{"user":{"e9f48ec6-c056-4404-911a-a15e1f0f8196":{"name":"jim","age":23,"$id":"e9f48ec6-c056-4404-911a-a15e1f0f8196","$created":1434580464913,"email":"jim@test.com","$updated":1434580464906,"$deleted":1434580464908,"$type":"user"}}}';
+require('fs').writeFileSync('storage.json', TEST_STORAGE);
+
 var debug = require('debug')('dao:test'),
     should = require('chai').should(),
     dao = require('../index');
@@ -247,6 +250,39 @@ describe("v0 api tests - file implementation", function() {
             done(err)
         }
     });    
+    it('should load existing data if present', function(done){
+        try {
+            var impl = dao.use(dao.FILE);
+            dao.register('user');
+            impl.user.count({name:'jim'})
+            .then(function(count){
+                should.exist(count);
+                count.should.be.a.number;
+                count.should.equal(1);
+            })
+            .then(function(){
+                impl.user.find({name:'jim'})
+                .then(function(foundModels){
+                    should.exist(foundModels);
+                    foundModels.should.be.an.array;
+                    foundModels.length.should.equal(1);
+                    foundModels[0].should.have.property('name').and.equal('jim');
+                    require('fs').unlinkSync('./storage.json');
+                    done();
+                })
+                .catch(function(err){
+                    done(err);
+                });
+            })
+            .catch(function(err){
+                require('fs').unlinkSync('./storage.json');
+                done(err);
+            });
+        } catch(err){
+            require('fs').unlinkSync('./storage.json');
+            done(err);
+        }
+    });
 });
 
 describe("v1 api tests - memory implementation", function() {
@@ -254,16 +290,24 @@ describe("v1 api tests - memory implementation", function() {
         try {
             var impl = dao.use(dao.MEMORY);
             dao.register('user');
-            impl.user.count({name:'joe'})
-            .then(function(count){
-                should.exist(count);
-                count.should.be.a.number;
-                count.should.equal(1);
-                done();
-            })
-            .catch(function(err){
-                done(err);
-            })
+            impl.clear().then(function(){
+                impl.user.create(TEST_MODEL)
+                .then(function(createdModel){
+                    impl.user.count({name:'joe'})
+                    .then(function(count){
+                        should.exist(count);
+                        count.should.be.a.number;
+                        count.should.equal(1);
+                        done();
+                    })
+                    .catch(function(err){
+                        done(err);
+                    })
+                })
+                .catch(function(err){
+                    done(err);
+                })
+            });
         } catch(err) {
             done(err)
         }
@@ -272,17 +316,22 @@ describe("v1 api tests - memory implementation", function() {
         try {
             var impl = dao.use(dao.MEMORY);
             dao.register('user');
-            impl.user.find({name:'joe'})
-            .then(function(foundModels){
-                should.exist(foundModels);
-                foundModels.should.be.an.array;
-                foundModels.length.should.equal(1);
-                foundModels[0].should.have.property('name').and.equal(TEST_MODEL.name);
-                done();
-            })
-            .catch(function(err){
-                done(err);
-            })
+            impl.clear().then(function(){
+                impl.user.create(TEST_MODEL)
+                .then(function(createdModel){
+                    impl.user.find({name:'joe'})
+                    .then(function(foundModels){
+                        should.exist(foundModels);
+                        foundModels.should.be.an.array;
+                        foundModels.length.should.equal(1);
+                        foundModels[0].should.have.property('name').and.equal(TEST_MODEL.name);
+                        done();
+                    })
+                    .catch(function(err){
+                        done(err);
+                    });
+                });
+            });
         } catch(err) {
             done(err)
         }
@@ -291,16 +340,21 @@ describe("v1 api tests - memory implementation", function() {
         try {
             var impl = dao.use(dao.MEMORY);
             dao.register('user');
-            impl.user.findOne({name:'joe'})
-            .then(function(foundModel){
-                should.exist(foundModel);
-                foundModel.should.be.an.object;
-                foundModel.should.have.property('name').and.equal(TEST_MODEL.name);
-                done();
-            })
-            .catch(function(err){
-                done(err);
-            })
+            impl.clear().then(function(){
+                impl.user.create(TEST_MODEL)
+                .then(function(createdModel){
+                    impl.user.findOne({name:'joe'})
+                    .then(function(foundModel){
+                        should.exist(foundModel);
+                        foundModel.should.be.an.object;
+                        foundModel.should.have.property('name').and.equal(TEST_MODEL.name);
+                        done();
+                    })
+                    .catch(function(err){
+                        done(err);
+                    });
+                });
+            });
         } catch(err) {
             done(err)
         }
