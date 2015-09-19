@@ -7,7 +7,8 @@
 		"delete":				{ "type": "function" },
 		"count":				{ "type": "function" },
 		"find":					{ "type": "function" },
-		"findOne":				{ "type": "function" }
+		"findOne":				{ "type": "function" },
+		"clear":				{ "type": "function" }
 	},
-	"required": ["create", "read", "update", "delete", "count", "find", "findOne"]
+	"required": ["create", "read", "update", "delete", "count", "find", "findOne", "clear"]
 }

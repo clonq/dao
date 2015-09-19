@@ -48,6 +48,7 @@ describe("v0 common api tests", function() {
             impl.should.have.property('count');
             impl.should.have.property('find');
             impl.should.have.property('findOne');
+            impl.should.have.property('clear');
             //todo: non v2 compliant
             done();
         } catch(err){

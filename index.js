@@ -49,6 +49,12 @@ module.exports = {
 			})
 		}
 	},
+	clear: function (model) {
+		return new Promise(function(resolve, reject){
+			if(this.impl) return resolve(this.impl.clear());
+			else return reject(new Error('No DAO implementation available'));
+		});
+	},
 	create: function (model) {
 		return new Promise(function(resolve, reject){
 			if(this.impl) return resolve(this.impl.create(model));

@@ -7,6 +7,12 @@ const STORAGE = 'storage.json';
 var buckets = loadData(STORAGE);
 
 module.exports = {
+    clear: function () {
+        return new Promise(function(resolve, reject){
+            buckets = {};
+            return resolve(buckets);
+        });
+    },
     create: function (model) {
         return new Promise(function(resolve, reject){
             model.$id = uuid.v4();
