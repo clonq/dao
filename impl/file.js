@@ -1,12 +1,19 @@
 var Promise = require('bluebird'),
     uuid = require('uuid'),
     _ = require('lodash'),
+    path = require('path'),
     fs = Promise.promisifyAll(require('fs'));
 
-const STORAGE = 'storage.json';
-var buckets = loadData(STORAGE);
+var storage = 'storage.json';
+var flags = {};
 
 module.exports = {
+    config: function (opts) {
+        opts = opts || {};
+        if(!!opts) flags = opts;
+        storage = opts.storage;
+        buckets = loadData(storage);
+    },
     clear: function () {
         return new Promise(function(resolve, reject){
             buckets = {};
@@ -94,25 +101,33 @@ module.exports = {
             }
         });
     }
+
 }
 
 function persist(model, resolve, reject){
-    fs
-    .writeFileAsync(STORAGE, JSON.stringify(buckets))
-    .then(function(){
-        return resolve(model);
-    })
-    .catch(function(err){
-        return reject(err);
-    })
+    if(!!storage) {
+        fs
+        .writeFileAsync(storage, JSON.stringify(buckets))
+        .then(function(){
+            return resolve(model);
+        })
+        .catch(function(err){
+            return reject(err);
+        });
+    } else {
+        return reject(new Error('storage not configured'));
+    }
 }
 
 function loadData(storageFilename) {
-    var storageFilename = ['.', storageFilename].join(require('path').sep);
+    var ret = {};
+    storageFilename = path.normalize(storageFilename);
     if(fs.existsSync(storageFilename)) {
-        console.log('storage initiated from', storageFilename);
-        return JSON.parse(fs.readFileSync(storageFilename, 'utf8'));
+        ret = JSON.parse(fs.readFileSync(storageFilename, 'utf8'));
+        if(!!flags.verbose) console.log('storage initialized from', storageFilename);
+        return ret;
     } else {
-        return {};
+        if(!!flags.verbose) console.log('warn:', storageFilename, 'not found');
+        return ret;
     }
 }

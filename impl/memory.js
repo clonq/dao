@@ -4,6 +4,8 @@ var Promise = require('bluebird'),
     buckets = {};
 
 module.exports = {
+    config: function () {
+    },
     clear: function () {
         return new Promise(function(resolve){
             buckets = {};
