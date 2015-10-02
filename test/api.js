@@ -367,6 +367,28 @@ describe("v1 api tests - memory implementation", function() {
             done(err)
         }
     });
+    it('should return 0 records ater a "clear" opreration using the in-memory adapter', function(done){
+        try {
+            var impl = dao.use(dao.MEMORY);
+            dao.register('user');
+            impl
+            .clear()
+            .then(function(res){
+                impl.user.count({name:'joe'})
+                .then(function(count){
+                    should.exist(count);
+                    count.should.be.a.number;
+                    count.should.equal(0);
+                    done();
+                })
+                .catch(function(err){
+                    done(err);
+                })
+            })
+        } catch(err) {
+            done(err)
+        }
+    });
 });
 
 describe("v1 api tests - file implementation", function() {
@@ -430,4 +452,30 @@ describe("v1 api tests - file implementation", function() {
             done(err)
         }
     });
+    it('should return 0 records ater a "clear" opreration using the file adapter', function(done){
+        try {
+            var impl = dao.use(dao.FILE);
+            dao.register('user');
+            impl
+            .clear()
+            .then(function(res){
+                impl.user.count({name:'joe'})
+                .then(function(count){
+                    should.exist(count);
+                    count.should.be.a.number;
+                    count.should.equal(0);
+                })
+                .then(function(){
+                    impl.user.create(TEST_MODEL)
+                    done();
+                })                
+                .catch(function(err){
+                    done(err);
+                })
+            })
+        } catch(err) {
+            done(err)
+        }
+    });
+
 });

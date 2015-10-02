@@ -17,7 +17,8 @@ module.exports = {
     clear: function () {
         return new Promise(function(resolve, reject){
             buckets = {};
-            return resolve(buckets);
+            return wipe(resolve, reject);
+            // return resolve(buckets);
         });
     },
     create: function (model) {
@@ -102,6 +103,21 @@ module.exports = {
         });
     }
 
+}
+
+function wipe(resolve, reject){
+    if(!!storage) {
+        fs
+        .writeFileAsync(storage, '{}')
+        .then(function(){
+            return resolve({});
+        })
+        .catch(function(err){
+            return reject(err);
+        });
+    } else {
+        return reject(new Error('storage not configured'));
+    }
 }
 
 function persist(model, resolve, reject){

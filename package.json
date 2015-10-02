@@ -1,6 +1,6 @@
 {
   "name": "daoi",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "description": "data access object interface",
   "scripts": {
     "test": "DEBUG=dao:* node_modules/mocha/bin/mocha --reporter spec"
