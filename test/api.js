@@ -1,7 +1,7 @@
 var should = require('chai').should();
 var dao = require('../index');
-var dummyAdapter = require('../impl/dummy');
-var notImplementedAdapter = require('../impl/notimplemented');
+var dummyAdapter = require('./fixtures/dummy');
+var notImplementedAdapter = require('./fixtures//notimplemented');
 
 describe("common api tests", function() {
     it('should fail for invalid adapters', function(done){
