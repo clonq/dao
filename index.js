@@ -12,7 +12,16 @@ function Dao(impl) {
     this.create = create;
     this.read = read;
     this.update = update;
-    this.delete = remove;
+    this.delete = daoDelete;
+    this.count = count;
+    this.find = find;
+    this.findOne = findOne;
+    this.remove = remove;
+    this.save = save;
+    this.upsert = upsert;
+    this.bulkCreate = bulkCreate;
+    this.bulkUpdate = bulkUpdate;
+    this.bulkDelete = bulkDelete;
     this.complianceLevel = determineComplianceLevel(this.impl);
     this.register = register;
 }
@@ -64,7 +73,7 @@ function update(model) {
     return this;
 }
 
-function remove(model) {
+function daoDelete(model) {
     var self = this;
     if(this.impl.delete) {
         this.impl.delete.call(this, model, function(err){
