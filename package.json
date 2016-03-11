@@ -1,7 +1,7 @@
 {
   "name": "daoi",
-  "version": "0.7.4",
-  "description": "data access object interface",
+  "version": "1.0.0",
+  "description": "data access object factory with support for pluggable implementations based on versioned specs",
   "scripts": {
     "test": "DEBUG=dao:* node_modules/mocha/bin/mocha --reporter spec"
   },
@@ -11,11 +11,7 @@
   },
   "author": "Ovi Comes",
   "dependencies": {
-    "bluebird": "^2.9.27",
-    "debug": "^2.2.0",
-    "jsonschema": "^1.0.1",
-    "lodash": "^3.9.3",
-    "uuid": "^2.0.1"
+    "jsonschema": "^1.0.1"
   },
   "devDependencies": {
     "chai": "^3.0.0",
