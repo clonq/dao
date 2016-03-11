@@ -1,6 +1,6 @@
 # DAO
 
-Simple [Data Access Object](https://en.wikipedia.org/wiki/Data_access_object) factory with support for pluggable implementations based on versioned specs
+Simple [Data Access Object](https://en.wikipedia.org/wiki/Data_access_object) interface with support for pluggable implementations based on versioned specs
 
 
 **Sample code**
@@ -30,7 +30,9 @@ npm install daoi --save
 
 **Implementations**
 
-Below are the operations required to be implemented by a concrete dao implementation grouped by the compliance level. A dao implementation should be at least v0 compliant. 
+daoi is just an interface. You need a concrete dao implementation in order to persist your models. Currently there is only one known implementation for AWS S3: [dao-s3](https://github.com/clonq/dao-s3) (v0 compliant).
+
+Below are the operations required to be implemented by a concrete dao implementation grouped by the compliance level. A dao implementation must be at least v0 compliant. 
 
 *v0 compliant operations*: create, read, update, delete
 
@@ -55,6 +57,6 @@ userDao
 .create({name:'test'});
 ```
 
-Known implementations: [dao-s3](https://github.com/clonq/dao-s3) (v0)
+
 
 
