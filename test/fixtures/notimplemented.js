@@ -1,5 +1,5 @@
 function create(model, cb){
-    cb(new Error('create not implemented'));
+    cb(null, model);
 }
 
 function read(model, cb){

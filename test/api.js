@@ -21,16 +21,75 @@ describe("common api tests", function() {
             done(err);
         }
     });    
-    it('should register a model', function(done){
-        try {
-            var rDao = dao
-            .use(notImplementedAdapter)
-            .register({$type:'test'});
-            rDao.should.have.property('test');
-            rDao.test.should.have.property('create');
+    it('should expose CRUD methods when a concrete implementation is available', function(){
+        var testDao = dao.use(notImplementedAdapter);
+        testDao.should.have.property('create');
+        testDao.should.have.property('read');
+        testDao.should.have.property('update');
+        testDao.should.have.property('delete');
+    });
+    it('should expose CRUD methods when registering a model with a concrete implementation', function(){
+        var testModel = { $type: 'test' };
+        var testDao = dao.use(notImplementedAdapter).register(testModel);
+        testDao.should.have.property('create');
+        testDao.should.have.property('read');
+        testDao.should.have.property('update');
+        testDao.should.have.property('delete');
+    });
+    it('should expose CRUD methods when registering a model before using a concrete implementation', function(done){
+        var testModel = { key: 'value' };
+        var testDao = dao.register({$type: 'test'}).use(notImplementedAdapter)
+        testDao.should.have.property('create');
+        testDao.should.have.property('read');
+        testDao.should.have.property('update');
+        testDao.should.have.property('delete');
+        testDao
+        .on('create', function(model){
+            should.exist(model);
+            model.should.have.property('key');
+            model.should.not.have.property('$type');
             done();
-        } catch(err){
+        })
+        .on('error', function(err){
             done(err);
-        }
-    });    
+        })
+        .create(testModel);
+    });
+    it('should not expose any methods when registering a model with no implementation available', function(){
+        var testModel = { $type: 'test' };
+        var testDao = dao.register(testModel);
+        should.exist(testDao);
+        testDao.should.not.have.property('create');
+    });
+    it('should invoke adapter methods', function(done){
+        var testModel = { key: 'value' };
+        dao
+        .use(notImplementedAdapter)
+        .on('create', function(model){
+            should.exist(model);
+            model.should.have.property('key');
+            model.should.not.have.property('$type');
+            done();
+        })
+        .on('error', function(err){
+            done(err);
+        })
+        .create(testModel);
+    });
+    it('should augment registered models', function(done){
+        var testModel = { key: 'value' };
+        dao
+        .use(notImplementedAdapter)
+        .register({$type:'test'})
+        .on('create', function(model){
+            should.exist(model);
+            model.should.have.property('key');
+            model.should.have.property('$type');
+            done();
+        })
+        .on('error', function(err){
+            done(err);
+        })
+        .create(testModel);
+    });
 });
