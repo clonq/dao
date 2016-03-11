@@ -75,6 +75,116 @@ function remove(model) {
     return this;
 }
 
+function count(model) {
+    var self = this;
+    if(this.impl.count) {
+        this.impl.count.call(this, model, function(err){
+            if(err) self.emit('error', err);
+            else self.emit('count', model);
+        });
+    }
+    return this;
+}
+
+function find(model) {
+    var self = this;
+    if(this.impl.find) {
+        this.impl.find.call(this, model, function(err){
+            if(err) self.emit('error', err);
+            else self.emit('find', model);
+        });
+    }
+    return this;
+}
+
+function findOne(model) {
+    var self = this;
+    if(this.impl.findOne) {
+        this.impl.findOne.call(this, model, function(err){
+            if(err) self.emit('error', err);
+            else self.emit('findOne', model);
+        });
+    }
+    return this;
+}
+
+function clear(model) {
+    var self = this;
+    if(this.impl.clear) {
+        this.impl.clear.call(this, model, function(err){
+            if(err) self.emit('error', err);
+            else self.emit('clear', model);
+        });
+    }
+    return this;
+}
+
+function remove(model) {
+    var self = this;
+    if(this.impl.remove) {
+        this.impl.remove.call(this, model, function(err){
+            if(err) self.emit('error', err);
+            else self.emit('remove', model);
+        });
+    }
+    return this;
+}
+
+function save(model) {
+    var self = this;
+    if(this.impl.save) {
+        this.impl.save.call(this, model, function(err){
+            if(err) self.emit('error', err);
+            else self.emit('save', model);
+        });
+    }
+    return this;
+}
+
+function upsert(model) {
+    var self = this;
+    if(this.impl.upsert) {
+        this.impl.upsert.call(this, model, function(err){
+            if(err) self.emit('error', err);
+            else self.emit('upsert', model);
+        });
+    }
+    return this;
+}
+
+function bulkCreate(model) {
+    var self = this;
+    if(this.impl.bulkCreate) {
+        this.impl.bulkCreate.call(this, model, function(err){
+            if(err) self.emit('error', err);
+            else self.emit('bulkCreate', model);
+        });
+    }
+    return this;
+}
+
+function bulkUpdate(model) {
+    var self = this;
+    if(this.impl.bulkUpdate) {
+        this.impl.bulkUpdate.call(this, model, function(err){
+            if(err) self.emit('error', err);
+            else self.emit('bulkUpdate', model);
+        });
+    }
+    return this;
+}
+
+function bulkDelete(model) {
+    var self = this;
+    if(this.impl.bulkDelete) {
+        this.impl.bulkDelete.call(this, model, function(err){
+            if(err) self.emit('error', err);
+            else self.emit('bulkDelete', model);
+        });
+    }
+    return this;
+}
+
 function getComplianceLevel(){
     return this.complianceLevel;
 }
