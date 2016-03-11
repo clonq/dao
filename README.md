@@ -1,93 +1,60 @@
 # DAO
 
-* simple dao factory with support for pluggable implementations
-* included basic in-memory and file-based implementations
-* versioned dao specs
+Simple [Data Access Object](https://en.wikipedia.org/wiki/Data_access_object) factory with support for pluggable implementations based on versioned specs
 
 
-Usage example
-===
+**Sample code**
+
 ```
 var dao = require('daoi');
+var s3DaoAdapter = require('s3DaoAdapter');
 
 dao
-.use(dao.FILE)
-.create({name:'joe', email:'joe@test.com'})
-.then(function(createdModel){
-    createdModel.should.have.property('$id');
+.use(s3DaoAdapter)
+.on('create', function(model){
+	// persisted model
 })
+.on('error', function(err){
+	// error handler
+})
+.config({ storage: 'mybucket/users.json' })
+.create({ name: 'joe', email: 'joe@test.com' });
+
 ```
 
-Installation
-===
+**Installation**
 
 ```
 npm install daoi --save
 ```
 
+**Implementations**
 
-Implementations
-===
+Below are the operations required to be implemented by a concrete dao implementation grouped by the compliance level. A dao implementation should be at least v0 compliant. 
 
-Below are the operations required to be implemented by a concrete dao implementation grouped by the compliance level. A dao implementation should be at least ver 0 compliant. 
+*v0 compliant operations*: create, read, update, delete
 
-**V0 compliant operations**
+*v1 compliant operations*: v0 operations + count, find, findOne, remove
 
-* create
-* read
-* update
-* delete
+*v2 compliant operations*: v1 operations + save, upsert, bulkCreate, bulkUpdate, bulkDelete
 
-**V1 compliant operations**
 
-* create
-* read
-* update
-* delete
-* count
-* find
-* findOne
-* remove
-
-**V2 compliant operations**
-
-* create
-* read
-* update
-* delete
-* count
-* find
-* findOne
-* remove
-* save
-* upsert
-* bulkCreate
-* bulkUpdate
-* bulkDelete
-
-This package comes with a v1-compliant in-memory implementation (`dao.MEMORY`) and a v1-compliant file implementation (`dao.FILE`).
-
-Other implementations can be plugged in like this:
-
-```
-var dao = require('daoi');
-var mongodao = require('dao-mongo');
-dao.use(mongodao)
-```
+**Helpers**
 
 Once an implementor is set via `dao.use(...)`, the complicance level can be queried using `dao.getComplianceLevel()`. 
 
 The dao interface is completely model agnostic. A dao concrete implementation should handle any model. An additional `register` method allows for model discrimination via an injected `$type` property in the supplied model:
 
 ```
-var impl = dao.use(dao.MEMORY)
-dao.register('user');
-impl.user.create({name:'test'})
-.then(function(newModel){
-	newModel.should.have.property('$type').and.equal('user');
+var userDao = dao.use(myAdapter).register('user');
+
+userDao
+.on('create', function(model){
+	// model.$type === 'user' 
 })
+.create({name:'test'});
 ```
 
-Calling `register(modelname)` on a dao instance automatically creates a new `modelname` key in the implementation. Also the model passed as argument in any of the dao operations will contain a `$type` key equal to `modelname` so concrete implementations can place models in the right bucket/table/etc... 
+Known implementations: [dao-s3](https://github.com/clonq/dao-s3) (v0)
 
-Dao runs a schema validation on the implementation set via `use` and makes available under the `modelname` key only the methods at the determined compliance level.
+
