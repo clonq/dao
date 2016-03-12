@@ -62,10 +62,10 @@ function determineComplianceLevel(impl) {
         validate(impl, v0Schema);
         complianceLevel = 'v0';
         try {
-            validate(this.impl, v1Schema);
+            validate(impl, v1Schema);
             complianceLevel = 'v1';
             try {
-                validate(this.impl, v2Schema);
+                validate(impl, v2Schema);
                 complianceLevel = 'v2';
             } catch(err) {
                 // v1 compliant
