@@ -34,9 +34,9 @@ function createInterface(){
         Object.keys(compliantSchema.properties).forEach(function(op){
             self[op] = function(model){
                 if(self.registeredType) model.$type = self.registeredType;
-                self.impl[op].call(self, model, function(err){
+                self.impl[op].call(self, model, function(err, res){
                     if(err) self.emit('error', err);
-                    else self.emit(op, model);
+                    else self.emit(op, res);
                 });
                 return self;
             }
