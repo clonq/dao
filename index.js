@@ -1,5 +1,4 @@
-var EventEmitter = require('events');
-var util = require('util');
+var EventEmitter = require('events').EventEmitter;
 var schemaValidator = require('jsonschema');
 var v0Schema = require('./schemas/v0.json');
 var v1Schema = require('./schemas/v1.json');
@@ -13,7 +12,7 @@ function Dao(impl) {
     this.register = register;
 }
 
-util.inherits(Dao, EventEmitter);
+require('util').inherits(Dao, EventEmitter);
 
 function use(impl) {
     return new Dao(impl);
